@@ -1,6 +1,33 @@
 import styled from "styled-components";
+import {useDispatch, useSelector} from "react-redux";
+import { useHistory} from "react-router-dom";
+import { auth, provider } from "../firebase";
+import { selectUserName, selectUserPhoto, setUserLoginDetails, setSignOutState } from "../features/user/userSlice";
 
 const Header = (props) => {
+    const dispatch = useDispatch();
+    const history = useHistory();
+    const userName = useSelector(selectUserName);
+    const userPhoto = useSelector(selectUserPhoto);
+
+    const handleAuth = () => {
+        auth.signInWithPopup(provider).then((result) => {
+            setUser(result.user);
+        }).catch((error) => {
+            alert(error.message);
+        });
+    };
+
+    const setUser = (user) => {
+        dispatch(
+            setUserLoginDetails({
+            name: user.displayName,
+            email: user.email,
+            photo: user.photoURL,
+            })
+        );
+    };
+
     return (
         <Nav>
             <Logo>
@@ -32,7 +59,7 @@ const Header = (props) => {
                 <span>SERIES</span>
                 </a> 
             </NavMenu>
-            <Login></Login>
+            <Login onClick={handleAuth}>LOGIN</Login>
         </Nav>
     );
 };
@@ -138,8 +165,14 @@ const Login = styled.a`
     border: 1px solid #f9f9f9;
     border-radius: 4px;
     transition: all 0.2s ease 0s;
+
+    &:hover {
+        background-color: #f9f9f9;
+        color: #000;
+        border-color: transparent;
+    }
     
-    
+
 `;
 
 export default Header;
