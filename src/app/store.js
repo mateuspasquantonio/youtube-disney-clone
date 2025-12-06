@@ -1,12 +1,18 @@
-import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
-import userReducer from "../features/user/userSlice"; 
+// ...existing code...
+import { configureStore } from "@reduxjs/toolkit";
+import userReducer from "../features/user/userSlice";
 
-export default configureStore({
-    reducer: {
-        user: userReducer,
-    },
-    middleware: getDefaultMiddleware({
-        serializableCheck: false,
+const store = configureStore({
+  reducer: {
+    user: userReducer,
+  },
+  // use the middleware callback parameter instead of importing getDefaultMiddleware
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      // optional: disable serializable check if you're using non-serializable values (e.g. firebase)
+      serializableCheck: false,
     }),
 });
-        // Add your reducers here
+
+export default store;
+// ...existing code...
